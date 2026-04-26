@@ -1,19 +1,37 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { useLang } from '../LangContext';
 import { useUser } from '../UserContext';
 import { t } from '../i18n';
-import guideMd from '../content/PicoLabb_Demo_Guide_zh.md?raw';
 
 export default function DemoGuide() {
   const { lang } = useLang();
   const { currentUser } = useUser();
+  const [guideMd, setGuideMd] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    fetch('/PicoLabb_Demo_Guide_zh.md')
+      .then((res) => {
+        if (!res.ok) throw new Error('guide_not_found');
+        return res.text();
+      })
+      .then((text) => {
+        if (alive) setGuideMd(text);
+      })
+      .catch(() => {
+        if (alive) setGuideMd('# Guide unavailable\n\nPlease check `public/PicoLabb_Demo_Guide_zh.md`.');
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const html = useMemo(() => {
     marked.setOptions({ gfm: true, breaks: true });
     return marked.parse(guideMd);
-  }, []);
+  }, [guideMd]);
 
   return (
     <div className="demo-guide-page">

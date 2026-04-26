@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '../LangContext';
 import { useUser } from '../UserContext';
@@ -10,12 +10,20 @@ const DEMO_ACCOUNTS = [
   { username: 'plsales_001', password: 'root5678', labelKey: 'login.roleSales1' },
   { username: 'plsales_002', password: 'root5678', labelKey: 'login.roleSales2' },
 ];
+const LOGIN_HEALTH_URL = 'https://picolabbs-backend.onrender.com/api/health';
 
 export default function Login() {
   const { lang } = useLang();
   const { setCurrentUser } = useUser();
   const [loadingUser, setLoadingUser] = useState(null);
   const [error, setError] = useState('');
+  const [backendOk, setBackendOk] = useState(true);
+
+  useEffect(() => {
+    fetch(LOGIN_HEALTH_URL, { method: 'GET' })
+      .then((res) => setBackendOk(res.ok))
+      .catch(() => setBackendOk(false));
+  }, []);
 
   const signInAs = async (username, password) => {
     setLoadingUser(username);
@@ -56,6 +64,13 @@ export default function Login() {
         {error && (
           <p style={{ color: 'var(--danger)', margin: '1rem 0 0', fontSize: '0.9rem', textAlign: 'center' }}>
             {error}
+          </p>
+        )}
+        {!backendOk && (
+          <p style={{ color: 'var(--warning)', margin: '0.75rem 0 0', fontSize: '0.85rem', textAlign: 'center' }}>
+            {lang === 'zh'
+              ? '後端健康檢查失敗：' + LOGIN_HEALTH_URL
+              : 'Backend health check failed: ' + LOGIN_HEALTH_URL}
           </p>
         )}
         <div style={{ marginTop: '1.75rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>

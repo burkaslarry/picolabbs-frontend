@@ -1,5 +1,10 @@
-// In dev, Vite proxies /api to backend. In production (e.g. Vercel), set VITE_API_URL to your backend (e.g. https://your-api.railway.app).
-const API = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '') + '/api';
+// In dev, Vite proxies /api to backend.
+// In production, prefer VITE_API_URL; fallback to Render backend for this project.
+const API_BASE = (
+  import.meta.env.VITE_API_URL
+  || (import.meta.env.PROD ? 'https://picolabbs-backend.onrender.com' : '')
+).replace(/\/$/, '');
+const API = `${API_BASE}/api`;
 
 /** Call backend /api/health; returns { ok: true } or throws. Use for header status and cron ping. */
 export async function getHealth() {
