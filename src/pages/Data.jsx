@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLang } from '../LangContext';
 import { t } from '../i18n';
+import HkBranchesReference from '../components/HkBranchesReference';
 import {
   getRagServices,
   getRagProducts,
@@ -135,6 +136,8 @@ export default function Data() {
       <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
         {t('data.intro', lang)}
       </p>
+
+      {region === 'hk' && <HkBranchesReference lang={lang} />}
 
       <div className="card" style={{ marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1rem' }}>
