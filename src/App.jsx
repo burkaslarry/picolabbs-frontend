@@ -18,7 +18,7 @@ import DemoGuide from './pages/DemoGuide';
 
 export default function App() {
   const { lang } = useLang();
-  const { currentUser } = useUser();
+  const { currentUser, setCurrentUser } = useUser();
   const [backendStatus, setBackendStatus] = useState('loading'); // 'loading' | 'ok' | 'error'
   const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') return 'light';
@@ -43,6 +43,7 @@ export default function App() {
   }, [theme]);
 
   const toggleTheme = () => setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
+  const logout = () => setCurrentUser(null);
 
   const displayName = currentUser?.name || currentUser?.username || '';
 
@@ -109,6 +110,14 @@ export default function App() {
                   {theme === 'dark'
                     ? (lang === 'zh' ? '淺色模式' : 'Light mode')
                     : (lang === 'zh' ? '深色模式' : 'Dark mode')}
+                </button>
+                <button
+                  type="button"
+                  className="btn secondary"
+                  onClick={logout}
+                  style={{ padding: '0.35rem 0.6rem' }}
+                >
+                  {t('login.logout', lang)}
                 </button>
               </nav>
               <div className="layout">

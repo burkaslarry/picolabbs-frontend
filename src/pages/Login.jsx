@@ -5,17 +5,14 @@ import { useUser } from '../UserContext';
 import { t } from '../i18n';
 import { login } from '../api';
 
-const DEMO_ACCOUNTS = [
-  { username: 'pladmin', password: 'root1234', labelKey: 'login.roleAdmin' },
-  { username: 'plsales_001', password: 'root5678', labelKey: 'login.roleSales1' },
-  { username: 'plsales_002', password: 'root5678', labelKey: 'login.roleSales2' },
-];
 const LOGIN_HEALTH_URL = 'https://picolabbs-backend.onrender.com/api/health';
 
 export default function Login() {
   const { lang } = useLang();
   const { setCurrentUser } = useUser();
-  const [loadingUser, setLoadingUser] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [backendOk, setBackendOk] = useState(true);
 
@@ -25,16 +22,18 @@ export default function Login() {
       .catch(() => setBackendOk(false));
   }, []);
 
-  const signInAs = async (username, password) => {
-    setLoadingUser(username);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!username.trim() || !password) return;
+    setLoading(true);
     setError('');
     try {
-      const res = await login(username, password);
+      const res = await login(username.trim(), password);
       setCurrentUser(res.user);
     } catch (err) {
       setError(lang === 'zh' ? '登入失敗，請確認後端已啟動' : 'Login failed. Is the backend running?');
     } finally {
-      setLoadingUser(null);
+      setLoading(false);
     }
   };
 
@@ -43,24 +42,42 @@ export default function Login() {
       <div className="card" style={{ width: '100%', maxWidth: 420, padding: '2rem' }}>
         <h1 style={{ margin: '0 0 0.5rem', textAlign: 'center' }}>PicoLabbs CRM</h1>
         <p style={{ margin: '0 0 1.5rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-          {t('login.pickRole', lang)}
+          {t('login.subtitle', lang)}
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-          {DEMO_ACCOUNTS.map(({ username, password, labelKey }) => (
-            <button
-              key={username}
-              type="button"
-              className="btn"
-              disabled={!!loadingUser}
-              style={{ justifyContent: 'center', padding: '0.75rem' }}
-              onClick={() => signInAs(username, password)}
-            >
-              {loadingUser === username
-                ? (lang === 'zh' ? '登入中…' : 'Signing in…')
-                : t(labelKey, lang)}
-            </button>
-          ))}
-        </div>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.9rem' }}>
+            {t('login.username', lang)}
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={t('login.usernamePlaceholder', lang)}
+              autoComplete="username"
+              style={{ padding: '0.55rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }}
+              required
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.9rem' }}>
+            {t('login.password', lang)}
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t('login.passwordPlaceholder', lang)}
+              autoComplete="current-password"
+              style={{ padding: '0.55rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }}
+              required
+            />
+          </label>
+          <button
+            type="submit"
+            className="btn"
+            disabled={loading}
+            style={{ justifyContent: 'center', padding: '0.75rem', marginTop: '0.25rem' }}
+          >
+            {loading ? t('login.signingIn', lang) : t('login.signIn', lang)}
+          </button>
+        </form>
         {error && (
           <p style={{ color: 'var(--danger)', margin: '1rem 0 0', fontSize: '0.9rem', textAlign: 'center' }}>
             {error}
