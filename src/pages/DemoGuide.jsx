@@ -4,7 +4,7 @@ import { marked } from 'marked';
 import { useLang } from '../LangContext';
 import { useUser } from '../UserContext';
 import { t } from '../i18n';
-import guideMd from '@repo-docs/PicoLabb_Demo_Guide_zh.md?raw';
+import guideMd from '../content/PicoLabb_Demo_Guide_zh.md?raw';
 
 export default function DemoGuide() {
   const { lang } = useLang();
