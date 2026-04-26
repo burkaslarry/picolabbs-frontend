@@ -1,0 +1,4 @@
+case_name,contact,status,notes,lead_ref
+"Laser package follow-up","+85290001111","open","Asked for package details and requested callback tomorrow","L-001"
+"Nail course payment reminder","alice@example.com","in_progress","Waiting for deposit confirmation","L-002"
+"Weight loss consultation reschedule","+85293334444","closed","Client moved appointment to next Monday","L-003"
