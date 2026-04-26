@@ -19,7 +19,11 @@ export async function login(username, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   });
-  if (!res.ok) throw new Error(await errorMessage(res));
+  if (!res.ok) {
+    const err = new Error(await errorMessage(res));
+    err.status = res.status;
+    throw err;
+  }
   return res.json();
 }
 

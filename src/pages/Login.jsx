@@ -31,7 +31,11 @@ export default function Login() {
       const res = await login(username.trim(), password);
       setCurrentUser(res.user);
     } catch (err) {
-      setError(lang === 'zh' ? '登入失敗，請確認後端已啟動' : 'Login failed. Is the backend running?');
+      if (err?.status === 401 || err?.status === 403) {
+        setError(lang === 'zh' ? '帳號或密碼錯誤，請重試。' : 'Invalid username or password. Please try again.');
+      } else {
+        setError(lang === 'zh' ? '無法連接後端，請確認後端已啟動。' : 'Cannot reach backend. Please ensure it is running.');
+      }
     } finally {
       setLoading(false);
     }

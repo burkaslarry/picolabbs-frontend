@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '../LangContext';
 import { t } from '../i18n';
-import { getLeads, updateLead } from '../api';
+import { getLeads, getRagCategories, updateLead } from '../api';
 import { useUser } from '../UserContext';
 
 const COLS = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked', 'Paid/Deposit', 'Completed', 'Lost'];
@@ -14,6 +14,7 @@ export default function Kanban() {
   const [loading, setLoading] = useState(true);
   const [moveError, setMoveError] = useState(null);
   const [highlightLeadId, setHighlightLeadId] = useState(null);
+  const [categoryMap, setCategoryMap] = useState({});
 
   let visibleCols = COLS;
   if (currentUser?.username === 'plsales_001') visibleCols = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked'];
@@ -33,6 +34,15 @@ export default function Kanban() {
   };
 
   useEffect(() => { load(); }, []);
+  useEffect(() => {
+    getRagCategories()
+      .then((rows) => {
+        const map = {};
+        (rows || []).forEach((r) => { map[r.code] = r.display_name; });
+        setCategoryMap(map);
+      })
+      .catch((e) => console.error(e));
+  }, []);
 
   const sortedLeads = [...leads].sort((a, b) => {
     const ta = Date.parse(a.updated_at || a.created_at || 0);
@@ -79,7 +89,7 @@ export default function Kanban() {
                   <Link to={`/lead/${lead.id}`} style={{ color: 'inherit', display: 'block', marginBottom: 4 }}>
                     <span className={`badge channel-${lead.channel}`} style={{ marginRight: 4 }}>{lead.channel}</span>
                     <span className={`badge vertical-tag ${lead.vertical || 'unknown'}`}>
-                      {lead.vertical_display_name || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
+                      {lead.vertical_display_name || categoryMap[lead.vertical] || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
                     </span>
                   </Link>
                   <p style={{ margin: '0.25rem 0', fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

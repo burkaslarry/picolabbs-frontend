@@ -82,7 +82,7 @@ export default function LeadDetail() {
   const handleStageChange = async (newStage) => {
     try {
       await updateLead(id, { stage: newStage });
-      setLead((p) => (p ? { ...p, stage: newStage } : null));
+      await load();
     } catch (e) {
       console.error(e);
     }

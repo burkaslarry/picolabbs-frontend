@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '../LangContext';
 import { t } from '../i18n';
-import { getLeads } from '../api';
+import { getLeads, getRagCategories } from '../api';
 import { useUser } from '../UserContext';
 import WhatsAppPasteModal from '../components/WhatsAppPasteModal';
 
@@ -16,6 +16,7 @@ export default function Inbox() {
   const [stage, setStage] = useState('');
   const [loading, setLoading] = useState(true);
   const [pasteOpen, setPasteOpen] = useState(false);
+  const [categoryMap, setCategoryMap] = useState({});
 
   let visibleStages = STAGES;
   if (currentUser?.username === 'plsales_001') visibleStages = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked'];
@@ -39,6 +40,15 @@ export default function Inbox() {
   };
 
   useEffect(() => { load(); }, [channel, stage]);
+  useEffect(() => {
+    getRagCategories()
+      .then((rows) => {
+        const map = {};
+        (rows || []).forEach((r) => { map[r.code] = r.display_name; });
+        setCategoryMap(map);
+      })
+      .catch((e) => console.error(e));
+  }, []);
 
   const onPasteCreated = () => {
     setPasteOpen(false);
@@ -100,7 +110,7 @@ export default function Inbox() {
                   <td><span className={`badge channel-${lead.channel}`}>{lead.channel}</span></td>
                   <td>
                     <span className={`badge vertical-tag ${lead.vertical || 'unknown'}`}>
-                      {lead.vertical_display_name || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
+                      {lead.vertical_display_name || categoryMap[lead.vertical] || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
                     </span>
                   </td>
                   <td>{lead.stage}</td>
