@@ -58,6 +58,7 @@ export default function LeadDetail() {
   const [draft, setDraft] = useState('');
   const [draftLoading, setDraftLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [serviceDateDraft, setServiceDateDraft] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -75,6 +76,9 @@ export default function LeadDetail() {
   useEffect(() => {
     getRagCategories().then(setCategories).catch((e) => console.error(e));
   }, []);
+  useEffect(() => {
+    setServiceDateDraft(lead?.service_date || '');
+  }, [lead?.service_date]);
 
   // Show skeleton immediately so the page feels responsive
   if (loading && !lead) return <LeadDetailSkeleton />;
@@ -200,9 +204,26 @@ export default function LeadDetail() {
         <p style={{ margin: '0.5rem 0 0' }}>
           <strong>{tr('leadDetail.serviceDate', lang)}:</strong>{' '}
           <input
-            type="date"
-            value={lead.service_date || ''}
-            onChange={(e) => handleServiceDateChange(e.target.value || null)}
+            type="text"
+            inputMode="numeric"
+            placeholder="YYYY-MM-DD"
+            value={serviceDateDraft}
+            onChange={(e) => setServiceDateDraft(e.target.value)}
+            onBlur={() => {
+              const value = serviceDateDraft.trim();
+              if (!value) {
+                handleServiceDateChange(null);
+                return;
+              }
+              if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                handleServiceDateChange(value);
+              } else {
+                setServiceDateDraft(lead?.service_date || '');
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.currentTarget.blur();
+            }}
             style={{ padding: '0.35rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)' }}
           />
           <span style={{ marginLeft: 8, color: 'var(--text-muted)', fontSize: '0.85rem' }}>{tr('leadDetail.serviceDateHint', lang)}</span>
