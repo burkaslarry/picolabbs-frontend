@@ -5,7 +5,6 @@ import { t } from '../i18n';
 import { getLeads } from '../api';
 import { useUser } from '../UserContext';
 import WhatsAppPasteModal from '../components/WhatsAppPasteModal';
-import AiAssistPanel from '../components/AiAssistPanel';
 
 const STAGES = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked', 'Paid/Deposit', 'Completed', 'Lost'];
 
@@ -17,7 +16,6 @@ export default function Inbox() {
   const [stage, setStage] = useState('');
   const [loading, setLoading] = useState(true);
   const [pasteOpen, setPasteOpen] = useState(false);
-  const [selectedLead, setSelectedLead] = useState(null);
 
   let visibleStages = STAGES;
   if (currentUser?.username === 'plsales_001') visibleStages = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked'];
@@ -80,23 +78,6 @@ export default function Inbox() {
         {t('inbox.hint', lang)}
       </p>
 
-      <div className="card" style={{ marginBottom: '1rem' }}>
-        <h3 style={{ marginTop: 0, marginBottom: '0.5rem' }}>AI Triage & Draft Generator</h3>
-        <p style={{ marginTop: 0, color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-          Select a lead to run AI classification and generate a product reply.
-        </p>
-        {selectedLead ? (
-          <div>
-            <div style={{ fontSize: '0.85rem', marginBottom: 6 }}>
-              <strong>{selectedLead.name || selectedLead.contact || selectedLead.id}</strong>
-            </div>
-            <AiAssistPanel messageText={selectedLead.raw_message || ''} contactName={selectedLead.name || ''} />
-          </div>
-        ) : (
-          <p style={{ color: 'var(--text-muted)', marginBottom: 0 }}>No lead selected.</p>
-        )}
-      </div>
-
       <div className="table-wrap card">
         {loading ? (
           <p>{t('inbox.loading', lang)}</p>
@@ -117,7 +98,11 @@ export default function Inbox() {
               {filteredLeads.map((lead) => (
                 <tr key={lead.id}>
                   <td><span className={`badge channel-${lead.channel}`}>{lead.channel}</span></td>
-                  <td><span className={`badge ${lead.vertical || 'unknown'}`}>{t(`vertical.${lead.vertical || 'unknown'}`, lang)}</span></td>
+                  <td>
+                    <span className={`badge vertical-tag ${lead.vertical || 'unknown'}`}>
+                      {lead.vertical_display_name || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
+                    </span>
+                  </td>
                   <td>{lead.stage}</td>
                   <td>{lead.contact || lead.name || '—'}</td>
                   <td style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -127,9 +112,6 @@ export default function Inbox() {
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{new Date(lead.created_at).toLocaleString()}</td>
                   <td style={{ display: 'flex', gap: 8 }}>
                     <Link to={`/lead/${lead.id}`}>{t('inbox.open', lang)}</Link>
-                    <button type="button" className="btn secondary" style={{ padding: '0.15rem 0.45rem', fontSize: '0.75rem' }} onClick={() => setSelectedLead(lead)}>
-                      AI
-                    </button>
                   </td>
                 </tr>
               ))}

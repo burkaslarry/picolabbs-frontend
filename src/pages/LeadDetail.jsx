@@ -5,34 +5,8 @@ import { useUser } from '../UserContext';
 import { t as tr } from '../i18n';
 import { LeadDetailSkeleton } from '../components/Skeleton';
 import { getLead, updateLead, getDraft, completeTask } from '../api';
-import {
-  STORAGE_KEY_SERVICE_SCOPE,
-  PICOLABBS_BUILTIN_VERTICAL_IDS,
-  migrateServiceScopeIds,
-} from '../storageKeys';
-
+import { getRagCategories } from '../api';
 const STAGES = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked', 'Paid/Deposit', 'Completed', 'Lost'];
-
-function getVerticalOptions() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY_SERVICE_SCOPE);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      const migrated = migrateServiceScopeIds(parsed);
-      if (migrated && migrated.length > 0) {
-        const same =
-          Array.isArray(parsed) &&
-          migrated.length === parsed.length &&
-          migrated.every((id, i) => id === parsed[i]);
-        if (!same) {
-          localStorage.setItem(STORAGE_KEY_SERVICE_SCOPE, JSON.stringify(migrated));
-        }
-        return migrated;
-      }
-    }
-  } catch (_) {}
-  return [...PICOLABBS_BUILTIN_VERTICAL_IDS];
-}
 
 function parseJsonPayload(payload) {
   if (!payload || typeof payload !== 'string') return null;
@@ -83,6 +57,7 @@ export default function LeadDetail() {
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState('');
   const [draftLoading, setDraftLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   const load = async () => {
     setLoading(true);
@@ -97,6 +72,9 @@ export default function LeadDetail() {
   };
 
   useEffect(() => { load(); }, [id]);
+  useEffect(() => {
+    getRagCategories().then(setCategories).catch((e) => console.error(e));
+  }, []);
 
   // Show skeleton immediately so the page feels responsive
   if (loading && !lead) return <LeadDetailSkeleton />;
@@ -192,9 +170,9 @@ export default function LeadDetail() {
             style={{ marginLeft: 4, padding: '0.35rem 0.5rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', minWidth: 160 }}
           >
             <option value="">—</option>
-            {getVerticalOptions().map((vid) => (
-              <option key={vid} value={vid}>
-                {tr(`vertical.${vid}`, lang) !== `vertical.${vid}` ? tr(`vertical.${vid}`, lang) : vid}
+            {categories.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.display_name}
               </option>
             ))}
           </select>

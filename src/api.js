@@ -155,6 +155,19 @@ export async function getRagProducts(region = null) {
   return res.json();
 }
 
+export async function getRagCategories() {
+  const res = await fetch(`${API}/rag/categories`);
+  if (!res.ok) throw new Error(await errorMessage(res));
+  return res.json();
+}
+
+export async function getBranches(region = null) {
+  const q = region ? `?region=${encodeURIComponent(region)}` : '';
+  const res = await fetch(`${API}/rag/branches${q}`);
+  if (!res.ok) throw new Error(await errorMessage(res));
+  return res.json();
+}
+
 export async function searchRagServices(region = null, q = null) {
   const params = new URLSearchParams();
   if (region) params.set('region', region);
@@ -264,11 +277,11 @@ export async function deleteRagProduct(id) {
   return res.json();
 }
 
-export async function updateRagCategory(oldName, newName) {
+export async function updateRagCategory({ oldCode = null, code, displayName }) {
   const res = await fetch(`${API}/rag/categories`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ oldName, newName }),
+    body: JSON.stringify({ oldCode, code, displayName }),
   });
   if (!res.ok) throw new Error(await errorMessage(res));
   return res.json();

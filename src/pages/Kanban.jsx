@@ -13,6 +13,7 @@ export default function Kanban() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [moveError, setMoveError] = useState(null);
+  const [highlightLeadId, setHighlightLeadId] = useState(null);
 
   let visibleCols = COLS;
   if (currentUser?.username === 'plsales_001') visibleCols = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked'];
@@ -33,15 +34,23 @@ export default function Kanban() {
 
   useEffect(() => { load(); }, []);
 
-  const byStage = COLS.reduce((acc, s) => ({ ...acc, [s]: leads.filter((l) => l.stage === s) }), {});
+  const sortedLeads = [...leads].sort((a, b) => {
+    const ta = Date.parse(a.updated_at || a.created_at || 0);
+    const tb = Date.parse(b.updated_at || b.created_at || 0);
+    return tb - ta;
+  });
+  const byStage = COLS.reduce((acc, s) => ({ ...acc, [s]: sortedLeads.filter((l) => l.stage === s) }), {});
 
   const move = async (leadId, newStage) => {
     setMoveError(null);
     const previousLeads = leads;
-    setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, stage: newStage } : l)));
+    const nowIso = new Date().toISOString();
+    setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, stage: newStage, updated_at: nowIso } : l)));
     try {
       const updated = await updateLead(leadId, { stage: newStage });
-      setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, stage: updated.stage } : l)));
+      setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, stage: updated.stage, updated_at: updated.updated_at || nowIso } : l)));
+      setHighlightLeadId(leadId);
+      window.setTimeout(() => setHighlightLeadId((curr) => (curr === leadId ? null : curr)), 1200);
     } catch (e) {
       console.error(e);
       setLeads(previousLeads);
@@ -66,10 +75,12 @@ export default function Kanban() {
             <div key={stage} className="kanban-col">
               <h3>{stage} ({byStage[stage]?.length ?? 0})</h3>
               {(byStage[stage] || []).map((lead) => (
-                <div key={lead.id} className="kanban-card">
+                <div key={lead.id} className={`kanban-card ${highlightLeadId === lead.id ? 'kanban-card-flash' : ''}`}>
                   <Link to={`/lead/${lead.id}`} style={{ color: 'inherit', display: 'block', marginBottom: 4 }}>
                     <span className={`badge channel-${lead.channel}`} style={{ marginRight: 4 }}>{lead.channel}</span>
-                    <span className={`badge ${lead.vertical || 'unknown'}`}>{t(`vertical.${lead.vertical || 'unknown'}`, lang)}</span>
+                    <span className={`badge vertical-tag ${lead.vertical || 'unknown'}`}>
+                      {lead.vertical_display_name || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
+                    </span>
                   </Link>
                   <p style={{ margin: '0.25rem 0', fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {lead.raw_message?.slice(0, 50) || '—'}…

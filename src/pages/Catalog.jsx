@@ -3,6 +3,7 @@ import { useLang } from '../LangContext';
 import { t } from '../i18n';
 import {
   getRagProducts,
+  getRagCategories,
   createRagProduct,
   updateRagProduct,
   deleteRagProduct,
@@ -14,6 +15,7 @@ import {
 export default function Catalog() {
   const { lang } = useLang();
   const [products, setProducts] = useState([]);
+  const [categoriesMeta, setCategoriesMeta] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('');
   const [importing, setImporting] = useState(false);
@@ -25,8 +27,9 @@ export default function Catalog() {
   const load = async () => {
     setLoading(true);
     try {
-      const data = await getRagProducts();
+      const [data, categoriesData] = await Promise.all([getRagProducts(), getRagCategories()]);
       setProducts(data);
+      setCategoriesMeta(categoriesData || []);
       if (data.length > 0 && !activeCategory) {
         const cats = [...new Set(data.map(p => p.category || 'Uncategorized'))];
         if (cats.length > 0) setActiveCategory(cats[0]);
@@ -42,7 +45,18 @@ export default function Catalog() {
     load();
   }, []);
 
-  const categories = [...new Set(products.map(p => p.category || 'Uncategorized'))];
+  const categoryDisplayName = (slug) => {
+    if (!slug || slug === 'Uncategorized') return 'Uncategorized';
+    const fromMeta = categoriesMeta.find((c) => c.code === slug)?.display_name;
+    if (fromMeta && fromMeta.trim()) return fromMeta.trim();
+    const translated = t(`vertical.${slug}`, lang);
+    return translated.startsWith('vertical.') ? slug : translated;
+  };
+
+  const categories = [...new Set([
+    ...products.map(p => p.category || 'Uncategorized'),
+    ...categoriesMeta.map((c) => c.code).filter(Boolean),
+  ])];
   const displayedProducts = products.filter(p => (p.category || 'Uncategorized') === activeCategory);
 
   const handleImport = async (file) => {
@@ -101,14 +115,14 @@ export default function Catalog() {
   const saveCategory = async (e) => {
     e.preventDefault();
     const newName = e.target.newName.value.trim();
+    const displayName = e.target.displayName.value.trim();
     if (!newName) return;
     try {
       if (categoryModal.mode === 'edit') {
-        await updateRagCategory(categoryModal.oldName, newName);
+        await updateRagCategory({ oldCode: categoryModal.oldName, code: newName, displayName });
         if (activeCategory === categoryModal.oldName) setActiveCategory(newName);
       } else {
-        // For 'add', we just set the active category to the new name
-        // It won't actually save to DB until a product is added with this category
+        await updateRagCategory({ code: newName, displayName });
         setActiveCategory(newName);
       }
       setCategoryModal(null);
@@ -179,7 +193,7 @@ export default function Catalog() {
                 }}
                 onClick={() => setActiveCategory(cat)}
               >
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat}</span>
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{categoryDisplayName(cat)}</span>
                 {activeCategory === cat && cat !== 'Uncategorized' && (
                   <div style={{ display: 'flex', gap: 4 }}>
                     <span style={{ fontSize: '0.8rem', cursor: 'pointer', opacity: 0.8 }} onClick={(e) => { e.stopPropagation(); setCategoryModal({ mode: 'edit', oldName: cat }); }}>✏️</span>
@@ -194,7 +208,7 @@ export default function Catalog() {
         {/* Products Table */}
         <div className="card" style={{ flexGrow: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ margin: 0 }}>{activeCategory} {t('catalog.products', lang)}</h3>
+            <h3 style={{ margin: 0 }}>{categoryDisplayName(activeCategory)} {t('catalog.products', lang)}</h3>
             <button className="btn" onClick={() => setEditingItem({ id: 'new', name: '', description: '', region: 'hk', category: activeCategory })}>
               {t('catalog.addProduct', lang)}
             </button>
@@ -281,6 +295,19 @@ export default function Catalog() {
               <label>
                 <div style={{ marginBottom: 4, fontSize: '0.9rem' }}>{t('catalog.categoryName', lang)} *</div>
                 <input required type="text" name="newName" defaultValue={categoryModal.oldName || ''} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface-hover)', color: 'var(--text)' }} />
+              </label>
+              <label>
+                <div style={{ marginBottom: 4, fontSize: '0.9rem' }}>{t('catalog.displayName', lang)} *</div>
+                <input
+                  required
+                  type="text"
+                  name="displayName"
+                  defaultValue={categoryModal.mode === 'edit'
+                    ? categoryDisplayName(categoryModal.oldName)
+                    : ''}
+                  placeholder={t('catalog.displayNamePlaceholder', lang)}
+                  style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface-hover)', color: 'var(--text)' }}
+                />
               </label>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
                 <button type="button" className="btn secondary" onClick={() => setCategoryModal(null)}>{t('leadDetail.cancel', lang)}</button>

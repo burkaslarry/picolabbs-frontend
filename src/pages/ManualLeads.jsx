@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLang } from '../LangContext';
 import { t } from '../i18n';
-import { createLead } from '../api';
+import { createLead, getRagCategories } from '../api';
 
 export default function ManualLeads() {
   const { lang } = useLang();
@@ -11,9 +11,20 @@ export default function ManualLeads() {
   const [contact, setContact] = useState('');
   const [source, setSource] = useState('manual_entry');
   const [stage, setStage] = useState('New');
+  const [vertical, setVertical] = useState('');
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    getRagCategories()
+      .then((rows) => {
+        setCategories(rows || []);
+        if (!vertical && rows?.length) setVertical(rows[0].code);
+      })
+      .catch((e) => console.error(e));
+  }, []);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -32,6 +43,7 @@ export default function ManualLeads() {
         name: name.trim() || undefined,
         contact: contact.trim() || undefined,
         source: source.trim() || undefined,
+        vertical: vertical || undefined,
       });
       if (stage !== 'New' && result?.lead?.id) {
         // Optional stage override when operator needs direct pipeline placement.
@@ -68,6 +80,17 @@ export default function ManualLeads() {
           >
             <option value="whatsapp">WhatsApp</option>
             <option value="shopline">Shopline</option>
+          </select>
+        </label>
+
+        <label className="manual-leads-field">
+          {t('manualLeads.category', lang)}
+          <select value={vertical} onChange={(e) => setVertical(e.target.value)}>
+            {categories.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.display_name}
+              </option>
+            ))}
           </select>
         </label>
 

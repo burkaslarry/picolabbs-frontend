@@ -1,7 +1,7 @@
-import { HK_BRANCHES, whatsappHref } from '../data/hkBranches';
+import { whatsappHref } from '../data/hkBranches';
 import { t } from '../i18n';
 
-export default function HkBranchesReference({ lang }) {
+export default function HkBranchesReference({ lang, branches = [] }) {
   return (
     <section
       className="card hk-branches-ref"
@@ -21,7 +21,7 @@ export default function HkBranchesReference({ lang }) {
           gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         }}
       >
-        {HK_BRANCHES.map((b) => {
+        {branches.map((b) => {
           const wa = whatsappHref(b.whatsapp);
           return (
             <article
@@ -36,30 +36,30 @@ export default function HkBranchesReference({ lang }) {
               }}
             >
               <h3 style={{ margin: '0 0 0.65rem', fontSize: '1rem', color: 'var(--text)' }}>
-                {lang === 'zh' ? b.nameZh : b.nameEn}
+                {lang === 'zh' ? b.name_zh : b.name_en}
                 <span style={{ display: 'block', fontWeight: 400, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  {lang === 'zh' ? b.nameEn : b.nameZh}
+                  {lang === 'zh' ? b.name_en : b.name_zh}
                 </span>
               </h3>
+              <p style={{ margin: '0 0 0.5rem', color: 'var(--text-muted)' }}>
+                <strong style={{ color: 'var(--text)' }}>{t('data.branchDistrict', lang)}:</strong>{' '}
+                {lang === 'zh' ? b.district_zh : b.district_en}
+                {lang === 'zh' ? ` / ${b.district_en}` : ` / ${b.district_zh}`}
+              </p>
               <p style={{ margin: '0 0 0.5rem' }}>
                 <strong>{t('data.branchAddress', lang)}:</strong>
                 <br />
-                {lang === 'zh' ? b.addressZh : b.addressEn}
+                {lang === 'zh' ? b.address_zh : b.address_en}
                 {lang === 'zh' && (
                   <>
                     <br />
-                    <span style={{ color: 'var(--text-muted)' }}>{b.addressEn}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{b.address_en}</span>
                   </>
                 )}
               </p>
-              {b.extraLines?.length > 0 && (
-                <p style={{ margin: '0 0 0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                  {b.extraLines.map((line) => (lang === 'zh' ? line.zh : line.en)).join(' · ')}
-                </p>
-              )}
               <p style={{ margin: '0 0 0.35rem' }}>
                 <strong>{t('data.branchPhone', lang)}:</strong>{' '}
-                <a href={`tel:${b.phone.replace(/\s/g, '')}`}>{b.phone}</a>
+                <a href={`tel:${String(b.phone || '').replace(/\s/g, '')}`}>{b.phone || '—'}</a>
               </p>
               <p style={{ margin: '0 0 0.35rem' }}>
                 <strong>{t('data.branchWhatsapp', lang)}:</strong>{' '}
@@ -73,8 +73,8 @@ export default function HkBranchesReference({ lang }) {
               </p>
               <p style={{ margin: 0, color: 'var(--text-muted)' }}>
                 <strong style={{ color: 'var(--text)' }}>{t('data.branchHours', lang)}:</strong>{' '}
-                {lang === 'zh' ? b.hoursZh : b.hoursEn}
-                {lang === 'zh' ? ` / ${b.hoursEn}` : ` / ${b.hoursZh}`}
+                {lang === 'zh' ? b.hours_zh : b.hours_en}
+                {lang === 'zh' ? ` / ${b.hours_en}` : ` / ${b.hours_zh}`}
               </p>
             </article>
           );

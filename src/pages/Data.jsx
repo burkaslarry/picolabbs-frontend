@@ -5,6 +5,7 @@ import HkBranchesReference from '../components/HkBranchesReference';
 import {
   getRagServices,
   getRagProducts,
+  getBranches,
   getFollowUpCases,
   getImportedLeads,
   searchRagServices,
@@ -30,6 +31,7 @@ export default function Data() {
   const [keyword, setKeyword] = useState('');
   const [services, setServices] = useState([]);
   const [products, setProducts] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [leads, setLeads] = useState([]);
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,25 +49,29 @@ export default function Data() {
     setLoading(true);
     try {
       if (keyword.trim()) {
-        const [s, p, ls, cs] = await Promise.all([
+        const [s, p, b, ls, cs] = await Promise.all([
           searchRagServices(region, keyword.trim()),
           searchRagProducts(region, keyword.trim()),
+          getBranches(region),
           getImportedLeads(),
           getFollowUpCases(),
         ]);
         setServices(s);
         setProducts(p);
+        setBranches(b);
         setLeads(ls);
         setCases(cs);
       } else {
-        const [s, p, ls, cs] = await Promise.all([
+        const [s, p, b, ls, cs] = await Promise.all([
           getRagServices(region),
           getRagProducts(region),
+          getBranches(region),
           getImportedLeads(),
           getFollowUpCases(),
         ]);
         setServices(s);
         setProducts(p);
+        setBranches(b);
         setLeads(ls);
         setCases(cs);
       }
@@ -137,7 +143,7 @@ export default function Data() {
         {t('data.intro', lang)}
       </p>
 
-      {region === 'hk' && <HkBranchesReference lang={lang} />}
+      {region === 'hk' && <HkBranchesReference lang={lang} branches={branches} />}
 
       <div className="card" style={{ marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1rem' }}>
