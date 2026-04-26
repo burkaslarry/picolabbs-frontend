@@ -137,7 +137,7 @@ export default function LeadDetail() {
       const triageData = lead.ai_triage;
       const ext = typeof triageData.extracted_fields === 'string' ? JSON.parse(triageData.extracted_fields || '{}') : (triageData.extracted_fields || {});
       const res = await getDraft({
-        vertical: triageData.vertical || 'picolabbs_pain_relief',
+        vertical: triageData.vertical || 'picolabbs_wellness',
         intent: triageData.intent || 'info',
         name: lead.name,
         service: triageData.subcategory || ext.serviceName,

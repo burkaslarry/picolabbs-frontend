@@ -243,16 +243,16 @@ export default function Catalog() {
             <form onSubmit={saveProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               <label>
                 <div style={{ marginBottom: 4, fontSize: '0.9rem' }}>{t('catalog.name', lang)} *</div>
-                <input required type="text" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)' }} />
+                <input required type="text" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface-hover)', color: 'var(--text)' }} />
               </label>
               <label>
                 <div style={{ marginBottom: 4, fontSize: '0.9rem' }}>{t('catalog.desc', lang)}</div>
-                <textarea rows={4} value={editingItem.description || ''} onChange={e => setEditingItem({...editingItem, description: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)' }} />
+                <textarea rows={4} value={editingItem.description || ''} onChange={e => setEditingItem({...editingItem, description: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface-hover)', color: 'var(--text)' }} />
               </label>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <label style={{ flex: 1 }}>
                   <div style={{ marginBottom: 4, fontSize: '0.9rem' }}>{t('catalog.region', lang)}</div>
-                  <select value={editingItem.region} onChange={e => setEditingItem({...editingItem, region: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)' }}>
+                  <select value={editingItem.region} onChange={e => setEditingItem({...editingItem, region: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface-hover)', color: 'var(--text)' }}>
                     <option value="hk">Hong Kong</option>
                     <option value="tw">Taiwan</option>
                     <option value="cn">China</option>
@@ -260,7 +260,7 @@ export default function Catalog() {
                 </label>
                 <label style={{ flex: 1 }}>
                   <div style={{ marginBottom: 4, fontSize: '0.9rem' }}>{t('catalog.categoryName', lang)}</div>
-                  <input type="text" value={editingItem.category || ''} onChange={e => setEditingItem({...editingItem, category: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)' }} />
+                  <input type="text" value={editingItem.category || ''} onChange={e => setEditingItem({...editingItem, category: e.target.value})} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface-hover)', color: 'var(--text)' }} />
                 </label>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
@@ -280,7 +280,7 @@ export default function Catalog() {
             <form onSubmit={saveCategory} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               <label>
                 <div style={{ marginBottom: 4, fontSize: '0.9rem' }}>{t('catalog.categoryName', lang)} *</div>
-                <input required type="text" name="newName" defaultValue={categoryModal.oldName || ''} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)' }} />
+                <input required type="text" name="newName" defaultValue={categoryModal.oldName || ''} style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface-hover)', color: 'var(--text)' }} />
               </label>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
                 <button type="button" className="btn secondary" onClick={() => setCategoryModal(null)}>{t('leadDetail.cancel', lang)}</button>

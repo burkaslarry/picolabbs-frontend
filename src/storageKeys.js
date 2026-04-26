@@ -5,6 +5,7 @@ export const STORAGE_KEY_SERVICE_SCOPE = 'crm-service-scope';
 export const PICOLABBS_BUILTIN_VERTICAL_IDS = [
   'picolabbs_hardware_pain',
   'picolabbs_hardware_beauty',
+  'picolabbs_wellness',
   'picolabbs_supplements',
   'picolabbs_pet_care',
   'picolabbs_services',
@@ -12,7 +13,6 @@ export const PICOLABBS_BUILTIN_VERTICAL_IDS = [
 
 /** Legacy demo verticals from the generic med-spa CRM */
 const LEGACY_SCOPE_IDS = new Set([
-  'med_spa',
   'training',
   'weight_loss_injection',
   'zomate_pt_1on1',
@@ -24,7 +24,7 @@ const LEGACY_SCOPE_IDS = new Set([
 ]);
 
 /** Legacy custom scope ids to drop on load (typo / retired slugs) */
-export const REMOVED_SERVICE_SCOPE_IDS = ['moisture_mask'];
+export const REMOVED_SERVICE_SCOPE_IDS = ['moisture_mask', 'med_spa'];
 
 export function filterRemovedScopeIds(ids) {
   if (!Array.isArray(ids)) return [];

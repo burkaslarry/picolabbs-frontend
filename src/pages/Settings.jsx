@@ -3,6 +3,7 @@ import { useLang } from '../LangContext';
 import { t } from '../i18n';
 import { getUsers, createUser, updateUserRole } from '../api';
 import { useUser } from '../UserContext';
+import { CRM_USER_ROLES, userRoleLabel } from '../userRoles';
 
 export default function Settings() {
   const { lang, setLang } = useLang();
@@ -12,6 +13,7 @@ export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [newUserRole, setNewUserRole] = useState('ops_front');
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState(null);
 
@@ -44,9 +46,10 @@ export default function Settings() {
     setAdding(true);
     setError(null);
     try {
-      await createUser({ email: email.trim(), name: name.trim() || undefined });
+      await createUser({ email: email.trim(), name: name.trim() || undefined, role: newUserRole });
       setEmail('');
       setName('');
+      setNewUserRole('ops_front');
       load();
     } catch (e) {
       setError(e.message);
@@ -144,7 +147,8 @@ export default function Settings() {
 
           <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'var(--surface-hover)', borderRadius: 8 }}>
             <h3 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>{t('users.addUser', lang)}</h3>
-            <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: 360 }}>
+            <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: 400 }}>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('users.roleHint', lang)}</p>
               <input
                 type="email"
                 placeholder={t('users.email', lang)}
@@ -160,6 +164,18 @@ export default function Settings() {
                 onChange={(e) => setName(e.target.value)}
                 style={{ padding: '0.5rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }}
               />
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                {t('users.role', lang)}
+                <select
+                  value={newUserRole}
+                  onChange={(e) => setNewUserRole(e.target.value)}
+                  style={{ padding: '0.5rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }}
+                >
+                  {CRM_USER_ROLES.map((r) => (
+                    <option key={r} value={r}>{userRoleLabel(r, t, lang)}</option>
+                  ))}
+                </select>
+              </label>
               {error && <p style={{ color: 'var(--danger)', fontSize: '0.9rem', margin: 0 }}>{error}</p>}
               <button type="submit" className="btn" disabled={adding}>{adding ? '…' : t('users.addUser', lang)}</button>
             </form>
@@ -184,12 +200,13 @@ export default function Settings() {
                         <td style={{ padding: '0.5rem 0' }}>{u.name || '—'}</td>
                         <td style={{ padding: '0.5rem 0' }}>
                           <select
-                            value={u.role}
+                            value={CRM_USER_ROLES.includes(u.role) ? u.role : 'operator'}
                             onChange={(e) => handleRoleChange(u.id, e.target.value)}
                             style={{ padding: '0.35rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)' }}
                           >
-                            <option value="operator">{t('users.operator', lang)}</option>
-                            <option value="superadmin">{t('users.superadmin', lang)}</option>
+                            {CRM_USER_ROLES.map((r) => (
+                              <option key={r} value={r}>{userRoleLabel(r, t, lang)}</option>
+                            ))}
                           </select>
                         </td>
                         <td style={{ padding: '0.5rem 0' }}>
