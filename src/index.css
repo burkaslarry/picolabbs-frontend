@@ -174,19 +174,36 @@ button {
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 500;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 .badge.channel-web { background: rgba(59,130,246,0.2); color: #93c5fd; }
 .badge.channel-whatsapp { background: rgba(37,211,102,0.2); color: #86efac; }
 .badge.channel-shopline { background: rgba(99,102,241,0.2); color: #a5b4fc; }
 
-:root[data-theme='light'] .badge.channel-web,
-:root[data-theme='light'] .badge.channel-whatsapp,
+:root[data-theme='light'] .badge.channel-web {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+}
+:root[data-theme='light'] .badge.channel-whatsapp {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
 :root[data-theme='light'] .badge.channel-shopline {
-  color: #111827;
+  background: #e0e7ff;
+  color: #4338ca;
+  border: 1px solid #a5b4fc;
 }
 .badge.confinement { background: rgba(234,179,8,0.2); color: #fde047; }
 .badge.training { background: rgba(34,197,94,0.2); color: #86efac; }
-.badge.vertical-tag { border: 1px solid transparent; }
+.badge.vertical-tag {
+  border: 1px solid transparent;
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .badge.preset-chip { color: #ffffff; }
 .badge.picolabbs_hardware_pain { background: rgba(239,68,68,0.22); color: #fecaca; border-color: rgba(248,113,113,0.4); }
 .badge.picolabbs_wellness { background: rgba(16,185,129,0.22); color: #a7f3d0; border-color: rgba(52,211,153,0.35); }
@@ -194,8 +211,30 @@ button {
 .badge.picolabbs_pet_care { background: rgba(59,130,246,0.22); color: #bfdbfe; border-color: rgba(96,165,250,0.35); }
 .badge.unknown { background: var(--surface-hover); color: var(--text-muted); }
 
-:root[data-theme='light'] .badge.vertical-tag {
-  color: #0f172a;
+:root[data-theme='light'] .badge.picolabbs_hardware_pain {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #f87171;
+}
+:root[data-theme='light'] .badge.picolabbs_wellness {
+  background: #d1fae5;
+  color: #047857;
+  border-color: #34d399;
+}
+:root[data-theme='light'] .badge.picolabbs_supplements {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fbbf24;
+}
+:root[data-theme='light'] .badge.picolabbs_pet_care {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #60a5fa;
+}
+:root[data-theme='light'] .badge.unknown {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
 }
 
 .badge.badge-returning {
@@ -206,9 +245,9 @@ button {
 }
 
 :root[data-theme='light'] .badge.badge-returning {
-  color: #581c87;
-  background: rgba(168, 85, 247, 0.18);
-  border-color: rgba(147, 51, 234, 0.35);
+  background: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #8b5cf6;
 }
 
 :root[data-theme='light'] .badge.preset-chip {
@@ -240,8 +279,8 @@ button {
 }
 
 table.customers-leads-table {
-  width: max(100%, 760px);
-  min-width: 760px;
+  width: max(100%, 820px);
+  min-width: 820px;
   table-layout: auto;
 }
 
@@ -252,28 +291,54 @@ table.customers-leads-table {
 
 .customers-leads-table th.customers-leads-col-visit,
 .customers-leads-table td.customers-leads-col-visit {
-  min-width: 10rem;
+  min-width: 15rem;
   writing-mode: horizontal-tb;
-  vertical-align: top;
-}
-
-.customers-leads-visit-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  line-height: 1.35;
-}
-
-.customers-leads-visit-primary {
-  font-size: 0.9rem;
-  color: var(--text);
+  vertical-align: middle;
   white-space: nowrap;
 }
 
-.customers-leads-visit-secondary {
-  font-size: 0.82rem;
+.customers-leads-contact-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.customers-leads-contact-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customers-leads-visit-one-line {
+  font-size: 0.9rem;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+.inbox-returning-inline {
+  max-width: 100%;
+}
+
+.lead-returning-one-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.lead-returning-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 @media (max-width: 900px) {

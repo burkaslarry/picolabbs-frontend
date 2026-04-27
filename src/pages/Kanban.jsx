@@ -86,13 +86,36 @@ export default function Kanban() {
               <h3>{stage} ({byStage[stage]?.length ?? 0})</h3>
               {(byStage[stage] || []).map((lead) => (
                 <div key={lead.id} className={`kanban-card ${highlightLeadId === lead.id ? 'kanban-card-flash' : ''}`}>
-                  <Link to={`/lead/${lead.id}`} style={{ color: 'inherit', display: 'block', marginBottom: 4 }}>
-                    <span className={`badge channel-${lead.channel}`} style={{ marginRight: 4 }}>{lead.channel}</span>
-                    <span className={`badge vertical-tag ${lead.vertical || 'unknown'}`}>
+                  <Link
+                    to={`/lead/${lead.id}`}
+                    style={{
+                      color: 'inherit',
+                      display: 'flex',
+                      flexWrap: 'nowrap',
+                      alignItems: 'center',
+                      gap: 6,
+                      marginBottom: 4,
+                      minWidth: 0,
+                    }}
+                  >
+                    <span className={`badge channel-${lead.channel}`} style={{ flexShrink: 0 }}>{lead.channel}</span>
+                    <span className={`badge vertical-tag ${lead.vertical || 'unknown'}`} style={{ minWidth: 0 }}>
                       {lead.vertical_display_name || categoryMap[lead.vertical] || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
                     </span>
                     {lead.is_returning_customer && (
-                      <span className="badge badge-returning" style={{ marginLeft: 4 }}>{t('inbox.returningShort', lang)}</span>
+                      <span
+                        className="badge badge-returning"
+                        style={{ flexShrink: 0, fontSize: '0.68rem' }}
+                        title={t('returning.visitLine', lang, {
+                          visit: String(lead.returning_visit_number ?? 1),
+                          total: String(lead.same_contact_lead_count ?? 1),
+                        })}
+                      >
+                        {t('returning.kanbanCompact', lang, {
+                          visit: String(lead.returning_visit_number ?? 1),
+                          total: String(lead.same_contact_lead_count ?? 1),
+                        })}
+                      </span>
                     )}
                   </Link>
                   <p style={{ margin: '0.25rem 0', fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

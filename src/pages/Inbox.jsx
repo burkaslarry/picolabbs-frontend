@@ -117,8 +117,17 @@ export default function Inbox() {
                   <td>{lead.stage}</td>
                   <td>
                     {lead.is_returning_customer ? (
-                      <span className="badge badge-returning" title={t('returning.visitLine', lang, { visit: String(lead.returning_visit_number ?? 1), total: String(lead.same_contact_lead_count ?? 1) })}>
-                        {t('inbox.returningShort', lang)}
+                      <span
+                        className="badge badge-returning inbox-returning-inline"
+                        title={t('returning.visitLine', lang, {
+                          visit: String(lead.returning_visit_number ?? 1),
+                          total: String(lead.same_contact_lead_count ?? 1),
+                        })}
+                      >
+                        {t('returning.inboxOneLine', lang, {
+                          visit: String(lead.returning_visit_number ?? 1),
+                          total: String(lead.same_contact_lead_count ?? 1),
+                        })}
                       </span>
                     ) : (
                       <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>—</span>

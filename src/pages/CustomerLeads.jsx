@@ -103,24 +103,22 @@ export default function CustomerLeads() {
               {sorted.map((lead) => (
                 <tr key={lead.id}>
                   <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                      <span>{lead.contact || lead.name || '—'}</span>
+                    <div className="customers-leads-contact-row">
+                      <span className="customers-leads-contact-text">{lead.contact || lead.name || '—'}</span>
                       {lead.is_returning_customer && (
-                        <span className="badge badge-returning" style={{ alignSelf: 'flex-start' }}>
+                        <span className="badge badge-returning" style={{ flexShrink: 0 }}>
                           {t('returning.badge', lang)}
                         </span>
                       )}
                     </div>
                   </td>
                   <td className="customers-leads-col-visit">
-                    <div className="customers-leads-visit-stack">
-                      <span className="customers-leads-visit-primary">
-                        {t('returning.visitNth', lang, { n: String(lead.returning_visit_number ?? 1) })}
-                      </span>
-                      <span className="customers-leads-visit-secondary">
-                        {t('returning.sameContactTotal', lang, { n: String(lead.same_contact_lead_count ?? 1) })}
-                      </span>
-                    </div>
+                    <span className="customers-leads-visit-one-line">
+                      {t('returning.visitLine', lang, {
+                        visit: String(lead.returning_visit_number ?? 1),
+                        total: String(lead.same_contact_lead_count ?? 1),
+                      })}
+                    </span>
                   </td>
                   <td><span className={`badge channel-${lead.channel}`}>{lead.channel}</span></td>
                   <td>

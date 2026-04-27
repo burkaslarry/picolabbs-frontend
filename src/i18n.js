@@ -60,6 +60,9 @@ const translations = {
       badge: 'Returning',
       empty: 'No leads in this view.',
       detailHint: 'Returning customer — visit {visit} of {total} with this contact.',
+      detailOneLine: 'Returning · inquiry {visit} / {total} leads with this contact',
+      inboxOneLine: 'Returning #{visit} · {total} leads',
+      kanbanCompact: 'R{visit}/{total}',
     },
     manualLeads: {
       title: 'Manual Lead Entry',
@@ -371,6 +374,9 @@ const translations = {
       badge: '熟客',
       empty: '此篩選下暫無名單。',
       detailHint: '熟客 — 此聯絡第 {visit} 次查詢，同聯絡共 {total} 筆。',
+      detailOneLine: '熟客 · 第 {visit} 次查詢，同聯絡共 {total} 筆',
+      inboxOneLine: '熟客 第 {visit} 次 · 共 {total} 筆',
+      kanbanCompact: '熟客 {visit}/{total}筆',
     },
     manualLeads: {
       title: '人手新增 Lead',
