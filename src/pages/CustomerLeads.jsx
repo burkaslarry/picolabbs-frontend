@@ -4,6 +4,7 @@ import { useLang } from '../LangContext';
 import { t } from '../i18n';
 import { getLeads, getRagCategories, seedReturningCustomersDemo } from '../api';
 import { useUser } from '../UserContext';
+import { contactGroupKey } from '../util/contactKey';
 
 const STAGES = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked', 'Paid/Deposit', 'Completed', 'Lost'];
 
@@ -56,7 +57,9 @@ export default function CustomerLeads() {
     return Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0);
   });
 
-  const returningCount = scoped.filter((l) => l.is_returning_customer).length;
+  const returningInView = scoped.filter((l) => l.is_returning_customer);
+  const returningLeadCount = returningInView.length;
+  const returningCustomerCount = new Set(returningInView.map(contactGroupKey)).size;
 
   return (
     <div>
@@ -99,7 +102,10 @@ export default function CustomerLeads() {
             <option value="returning">{t('returning.filterReturning', lang)}</option>
           </select>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            {t('returning.summary', lang, { n: String(returningCount) })}
+            {t('returning.summary', lang, {
+              leads: String(returningLeadCount),
+              customers: String(returningCustomerCount),
+            })}
           </span>
         </div>
         {seedMsg && (
