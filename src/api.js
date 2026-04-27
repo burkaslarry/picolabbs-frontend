@@ -13,6 +13,23 @@ export async function getHealth() {
   return res.json();
 }
 
+/** 與後端 DemoSeedController 預設一致；正式環境請改 PICOLABBS_DEMO_SEED_KEY。 */
+export const DEMO_RETURNING_SEED_KEY = 'picolabbs-prototype-returning-seed-v1';
+
+export async function seedReturningCustomersDemo(key = DEMO_RETURNING_SEED_KEY) {
+  const res = await fetch(`${API}/demo/seed-returning-customers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key }),
+  });
+  if (!res.ok) {
+    const err = new Error(await errorMessage(res));
+    err.status = res.status;
+    throw err;
+  }
+  return res.json();
+}
+
 export async function login(username, password) {
   const res = await fetch(`${API}/auth/login`, {
     method: 'POST',

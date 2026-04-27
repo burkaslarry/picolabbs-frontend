@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '../LangContext';
 import { t } from '../i18n';
-import { getLeads, getRagCategories } from '../api';
+import { getLeads, getRagCategories, seedReturningCustomersDemo } from '../api';
 import { useUser } from '../UserContext';
 
 const STAGES = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked', 'Paid/Deposit', 'Completed', 'Lost'];
@@ -14,6 +14,8 @@ export default function CustomerLeads() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // 'all' | 'returning'
   const [categoryMap, setCategoryMap] = useState({});
+  const [seedMsg, setSeedMsg] = useState(null);
+  const [seedBusy, setSeedBusy] = useState(false);
 
   let visibleStages = STAGES;
   if (currentUser?.username === 'plsales_001') visibleStages = ['New', 'Needs Info', 'Qualified', 'Offered Slots', 'Booked'];
@@ -66,6 +68,28 @@ export default function CustomerLeads() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          {currentUser?.user_role === 'master_admin' && (
+            <button
+              type="button"
+              className="btn secondary"
+              disabled={seedBusy}
+              onClick={async () => {
+                setSeedMsg(null);
+                setSeedBusy(true);
+                try {
+                  const r = await seedReturningCustomersDemo();
+                  setSeedMsg(r?.hint || (lang === 'zh' ? '已同步示範熟客，請重新整理列表。' : 'Demo returning customers synced. Refresh the list.'));
+                  await load();
+                } catch (e) {
+                  setSeedMsg(e?.message || String(e));
+                } finally {
+                  setSeedBusy(false);
+                }
+              }}
+            >
+              {seedBusy ? '…' : t('returning.seedDemoButton', lang)}
+            </button>
+          )}
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -78,6 +102,11 @@ export default function CustomerLeads() {
             {t('returning.summary', lang, { n: String(returningCount) })}
           </span>
         </div>
+        {seedMsg && (
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: 720 }}>
+            {seedMsg}
+          </p>
+        )}
       </div>
 
       <p className="customers-leads-scroll-hint">{t('returning.scrollHint', lang)}</p>

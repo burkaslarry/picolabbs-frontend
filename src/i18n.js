@@ -63,6 +63,7 @@ const translations = {
       detailOneLine: 'Returning · inquiry {visit} / {total} leads with this contact',
       inboxOneLine: 'Returning #{visit} · {total} leads',
       kanbanCompact: 'R{visit}/{total}',
+      seedDemoButton: 'Load demo returning customers',
     },
     manualLeads: {
       title: 'Manual Lead Entry',
@@ -377,6 +378,7 @@ const translations = {
       detailOneLine: '熟客 · 第 {visit} 次查詢，同聯絡共 {total} 筆',
       inboxOneLine: '熟客 第 {visit} 次 · 共 {total} 筆',
       kanbanCompact: '熟客 {visit}/{total}筆',
+      seedDemoButton: '載入示範熟客（61112222／99998888）',
     },
     manualLeads: {
       title: '人手新增 Lead',
