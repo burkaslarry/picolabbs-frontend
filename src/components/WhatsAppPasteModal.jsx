@@ -33,19 +33,34 @@ export default function WhatsAppPasteModal({ onClose, onCreated }) {
   };
 
   return (
+    /*
+      UI Component: WhatsApp modal overlay backdrop
+      - Full-screen dim background
+      - Click backdrop to close modal
+    */
     <div className="modal-overlay" onClick={onClose}>
+      {/*
+        UI Component: WhatsApp modal panel
+        - Main dialog container in center
+        - Stops click propagation so inside clicks do not close modal
+      */}
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h2>{t('modal.whatsappTitle', lang)}</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
           {t('modal.whatsappHint', lang)}
         </p>
 
+        {/*
+          UI Component: Preset quick-insert chips
+          - Sample scenarios for one-click message fill
+          - Includes supplement/product-related examples
+        */}
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
           {PRESETS.map((p, idx) => (
             <button
               key={idx}
               type="button"
-              className="badge"
+              className="badge preset-chip"
               style={{ background: 'var(--surface-hover)', border: '1px solid var(--border)', cursor: 'pointer', fontSize: '0.8rem', padding: '0.2rem 0.5rem' }}
               onClick={() => setMessage(p.msg)}
             >
@@ -54,6 +69,13 @@ export default function WhatsAppPasteModal({ onClose, onCreated }) {
           ))}
         </div>
 
+        {/*
+          UI Component: Inquiry creation form
+          - Message textarea (required)
+          - Contact input (optional)
+          - Error message area
+          - Cancel / Create action buttons
+        */}
         <form onSubmit={submit}>
           <div className="form-group">
             <label>{t('modal.messageRequired', lang)}</label>
