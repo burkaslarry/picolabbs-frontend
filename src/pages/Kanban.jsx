@@ -91,6 +91,9 @@ export default function Kanban() {
                     <span className={`badge vertical-tag ${lead.vertical || 'unknown'}`}>
                       {lead.vertical_display_name || categoryMap[lead.vertical] || t(`vertical.${lead.vertical || 'unknown'}`, lang)}
                     </span>
+                    {lead.is_returning_customer && (
+                      <span className="badge badge-returning" style={{ marginLeft: 4 }}>{t('inbox.returningShort', lang)}</span>
+                    )}
                   </Link>
                   <p style={{ margin: '0.25rem 0', fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {lead.raw_message?.slice(0, 50) || '—'}…

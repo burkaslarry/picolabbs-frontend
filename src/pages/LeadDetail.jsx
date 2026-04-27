@@ -201,6 +201,17 @@ export default function LeadDetail() {
           )}
         </p>
         <p style={{ margin: '0.5rem 0 0' }}><strong>{tr('leadDetail.contact', lang)}:</strong> {lead.contact || lead.name || '—'}</p>
+        {lead.is_returning_customer && (
+          <p style={{ margin: '0.5rem 0 0' }}>
+            <span className="badge badge-returning">{tr('returning.badge', lang)}</span>
+            <span style={{ marginLeft: 8, color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+              {tr('returning.detailHint', lang, {
+                visit: String(lead.returning_visit_number ?? 1),
+                total: String(lead.same_contact_lead_count ?? 1),
+              })}
+            </span>
+          </p>
+        )}
         <p style={{ margin: '0.5rem 0 0' }}>
           <strong>{tr('leadDetail.serviceDate', lang)}:</strong>{' '}
           <input

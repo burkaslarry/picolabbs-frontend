@@ -98,6 +98,7 @@ export default function Inbox() {
                 <th>{t('inbox.channel', lang)}</th>
                 <th>{t('inbox.vertical', lang)}</th>
                 <th>{t('inbox.stage', lang)}</th>
+                <th>{t('inbox.returningShort', lang)}</th>
                 <th>{t('inbox.contact', lang)}</th>
                 <th>{t('inbox.preview', lang)}</th>
                 <th>{t('inbox.created', lang)}</th>
@@ -114,6 +115,15 @@ export default function Inbox() {
                     </span>
                   </td>
                   <td>{lead.stage}</td>
+                  <td>
+                    {lead.is_returning_customer ? (
+                      <span className="badge badge-returning" title={t('returning.visitLine', lang, { visit: String(lead.returning_visit_number ?? 1), total: String(lead.same_contact_lead_count ?? 1) })}>
+                        {t('inbox.returningShort', lang)}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>—</span>
+                    )}
+                  </td>
                   <td>{lead.contact || lead.name || '—'}</td>
                   <td style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {lead.raw_message?.slice(0, 60) || '—'}

@@ -15,6 +15,7 @@ import ManualLeads from './pages/ManualLeads';
 import Login from './pages/Login';
 import Catalog from './pages/Catalog';
 import DemoGuide from './pages/DemoGuide';
+import CustomerLeads from './pages/CustomerLeads';
 
 export default function App() {
   const { lang } = useLang();
@@ -84,6 +85,7 @@ export default function App() {
                 </span>
                 <div className="nav-links">
                   <NavLink to="/" end>{t('nav.inbox', lang)}</NavLink>
+                  <NavLink to="/customers">{t('nav.returningCustomers', lang)}</NavLink>
                   <NavLink to="/kanban">{t('nav.kanban', lang)}</NavLink>
                   <NavLink to="/automations">{t('nav.automations', lang)}</NavLink>
                   <NavLink to="/manual-leads">{t('nav.manualLeads', lang)}</NavLink>
@@ -123,6 +125,7 @@ export default function App() {
               <div className="layout">
                 <aside className="sidebar">
                   <NavLink to="/">{t('nav.inbox', lang)}</NavLink>
+                  <NavLink to="/customers">{t('nav.returningCustomers', lang)}</NavLink>
                   <NavLink to="/kanban">{t('nav.pipeline', lang)}</NavLink>
                   <NavLink to="/automations">{t('nav.rulesTemplates', lang)}</NavLink>
                   <NavLink to="/manual-leads">{t('nav.manualLeads', lang)}</NavLink>
@@ -135,6 +138,7 @@ export default function App() {
                 <main className="main">
                   <Routes>
                     <Route path="/" element={<Inbox />} />
+                    <Route path="/customers" element={<CustomerLeads />} />
                     <Route path="/lead/:id" element={<LeadDetail />} />
                     <Route path="/kanban" element={<Kanban />} />
                     <Route path="/automations" element={<Automations />} />
