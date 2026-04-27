@@ -80,15 +80,17 @@ export default function CustomerLeads() {
         </div>
       </div>
 
-      <div className="table-wrap card">
+      <p className="customers-leads-scroll-hint">{t('returning.scrollHint', lang)}</p>
+
+      <div className="table-wrap card customers-leads-table-wrap">
         {loading ? (
           <p>{t('inbox.loading', lang)}</p>
         ) : (
-          <table>
+          <table className="customers-leads-table">
             <thead>
               <tr>
                 <th>{t('returning.columnCustomer', lang)}</th>
-                <th>{t('returning.columnVisit', lang)}</th>
+                <th className="customers-leads-col-visit">{t('returning.columnVisit', lang)}</th>
                 <th>{t('inbox.channel', lang)}</th>
                 <th>{t('inbox.vertical', lang)}</th>
                 <th>{t('inbox.stage', lang)}</th>
@@ -110,11 +112,15 @@ export default function CustomerLeads() {
                       )}
                     </div>
                   </td>
-                  <td style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                    {t('returning.visitLine', lang, {
-                      visit: String(lead.returning_visit_number ?? 1),
-                      total: String(lead.same_contact_lead_count ?? 1),
-                    })}
+                  <td className="customers-leads-col-visit">
+                    <div className="customers-leads-visit-stack">
+                      <span className="customers-leads-visit-primary">
+                        {t('returning.visitNth', lang, { n: String(lead.returning_visit_number ?? 1) })}
+                      </span>
+                      <span className="customers-leads-visit-secondary">
+                        {t('returning.sameContactTotal', lang, { n: String(lead.same_contact_lead_count ?? 1) })}
+                      </span>
+                    </div>
                   </td>
                   <td><span className={`badge channel-${lead.channel}`}>{lead.channel}</span></td>
                   <td>
